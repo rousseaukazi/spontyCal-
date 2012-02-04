@@ -1,6 +1,7 @@
 import json
 import calDB as database
 
+from dateutil import parser
 from twisted.web import server, resource
 from twisted.internet import reactor
 
@@ -30,8 +31,12 @@ class Server(resource.Resource):
             location = ''
             print 'Locations header missing from headers: %s' % e
 
-        data = getEventData(subscriptions, location)
-        return json.dumps(data)
+        try:
+            data = getEventData(subscriptions, location)
+        except Exception as e:
+            return 'Error: %s' % e
+        else:
+            return json.dumps(data)
         
     def render_POST(self, request):
         return self.render_GET(request)
@@ -40,16 +45,17 @@ def getEventData(subscriptions, location):
     eventList = []
     for sub in subscriptions:
         events = database.getEvents(sub)
+        events = [sub]
         eventList += events
 
-    #sorted(eventList, dictCompare)
-    return eventList
+    return sorted(eventList, dictCompare)
 
 def dictCompare(first, second):
-    f = first['time']
-    s = second['time']
+    f = parser.parse(first['time'])
+    s = parser.parse(second['time'])
+
     if f > s: return 1
-    elif f < 2: return -1
+    elif f < s: return -1
     else: return 0
 
 
