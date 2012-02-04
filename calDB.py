@@ -15,7 +15,7 @@ def getEvents(subscription):
     con = lite.connect('calSpontyDB.db')
     shitReturned = []
     with con:
-        con.row_factory = lite.Row
+        con.row_factory = dict_factory
         cur = con.cursor()  
         cur.execute("SELECT * FROM Events")
         rows = cur.fetchall()
@@ -24,7 +24,11 @@ def getEvents(subscription):
 
     return shitReturned
 
-
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
 
 #
 #eventDay = 3
