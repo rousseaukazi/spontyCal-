@@ -3,7 +3,7 @@ import calDB as database
 
 from dateutil import parser
 from twisted.web import server, resource
-from twisted.internet import reactor
+from twisted.internet import reactor, task
 
 
 class Server(resource.Resource):
@@ -67,8 +67,20 @@ def dictCompare(first, second):
     else: return 0
 
 
+def periodicScrape():
+    ## PUT ANY FUNTION CALLS HERE THAT YOU NEED TO RUN PERIODICALLY
+    ## example:
+    ## import fbEvents (at the top of the file)
+    ## inside this function:
+    ## fbEvents.update()  
+    ## 
+    pass
+
 
 if __name__ == '__main__':
     site = server.Site(Server())
     reactor.listenTCP(8088, site)
+    periodicScrape()
+    l = task.LoopingCall(periodicScrape)
+    l.start(86400)
     reactor.run()
