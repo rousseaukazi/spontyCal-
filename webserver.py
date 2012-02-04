@@ -56,8 +56,6 @@ def getEventData(subscriptions, location):
     return sorted(eventList, dictCompare)
 
 def dictCompare(first, second):
-    print first['time'], second['time'], ':::::::::::::::::::::::'
-
     try:
         f = parser.parse(first['time'])
         s = parser.parse(second['time'])
