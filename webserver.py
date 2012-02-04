@@ -1,4 +1,7 @@
 import json
+#import calDB as database
+
+from dateutil import parser
 from twisted.web import server, resource
 from twisted.internet import reactor
 
@@ -9,62 +12,61 @@ class Server(resource.Resource):
         return self
 
     def render_GET(self, request):
-        headers = request.getHeaders()
-        path = request.path
-
-        print '---- Received Request with path: %s ----' % path
-        print 'headers:', headers
-        
         try:
-            subscriptions = json.loads(headers['subscriptions'])
+            path = request.path
+
+            if path == '/favicon.ico':
+                return ''
+            elif path == '/events':
+                return self.render_events(request)
+            else:
+                path = path[1:]
+                with open(path) as f:
+                    return f.read()
+        except Exception as e:
+            return 'Error: %s' % e
+
+    def render_events(self, request):
+        args = request.args
+        try:
+            subscriptions = args['subscriptions'][0].split(',')
             subscriptions = [str(s) for s in subscriptions]
-        except (KeyError, TypeError) as e:
+        except (KeyError, TypeError, IndexError) as e:
             subscriptions = []
             print 'Subscriptions header missing from headers: %s' % e
         
         try:
-            location = str(json.loads(headers['location']))
-        except (KeyError, TypeError) as e:
+            location = args['location'][0]
+        except (KeyError, TypeError, IndexError) as e:
             location = ''
             print 'Locations header missing from headers: %s' % e
 
-        print 'Subscriptions:', subscriptions
-        print 'location', location
-
         data = getEventData(subscriptions, location)
-        print 'DATA result: %s\n\n' % data
-        #return json.dumps(data)
-        return "ROUSSEAU LICKS BALLS"
+        return json.dumps(data)
         
     def render_POST(self, request):
         return self.render_GET(request)
 
-def dictCompare(first, second):
-    f = first['time']
-    s = second['time']
-    
-    if f > s:
-        return 1
-    elif f < 2:
-        return -1
-    else:
-        return 0
-
-    
-
-
 def getEventData(subscriptions, location):
     eventList = []
     for sub in subscriptions:
-        #events = database.getEvents(sub)
-        #eventList += events
-        pass
+        events = database.getEvents(sub)
+        events = [sub]
+        eventList += events
 
-    #sorted(eventList, dictCompare)
-    return eventList
+    return sorted(eventList, dictCompare)
+
+def dictCompare(first, second):
+    f = parser.parse(first['time'])
+    s = parser.parse(second['time'])
+
+    if f > s: return 1
+    elif f < s: return -1
+    else: return 0
+
+
 
 if __name__ == '__main__':
     site = server.Site(Server())
     reactor.listenTCP(8088, site)
-    reactor.callLater(5, reactor.stop)
     reactor.run()
