@@ -12,14 +12,18 @@ from BeautifulSoup import BeautifulSoup
 from time import clock, time
 
 def getEvents(subscription):
-    cur.execute("SELECT * FROM Events")
     
-    rows = cur.fetchall()
+    with con:
     
-    shitReturned = []
-    
-    for row in rows:
-        shitReturned.append(row)
+        cur = con.cursor()  
+        cur.execute("SELECT * FROM Events")
+        
+        rows = cur.fetchall()
+        
+        shitReturned = []
+        
+        for row in rows:
+            shitReturned.append(row)
 
 
 
