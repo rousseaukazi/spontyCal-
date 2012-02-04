@@ -233,14 +233,14 @@ def getEvents(subscription):
 #            long = 0
 #        
         
-con = lite.connect('calSpontyDB.db')
+#con = lite.connect('calSpontyDB.db')
 
-with con:
+#with con:
     
-    cur = con.cursor()  
+#    cur = con.cursor()  
 #    cur.execute("CREATE TABLE Events(eventId INT, name TEXT, lat TEXT, long TEXT, distance TEXT, picture TEXT, description TEXT, time TEXT, location TEXT)")
 
-    cur.execute("INSERT INTO Events VALUES("eventId","name","lat","long","distance","picture","description","time","location)")
+#    cur.execute("INSERT INTO Events VALUES("eventId","name","lat","long","distance","picture","description","time","location)")
 #    
 #    
 #    
