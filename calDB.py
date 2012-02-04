@@ -22,7 +22,7 @@ def getEvents(subscription):
     
     for row in rows:
         shitReturned.append(row)
-
+    return shitReturned
 
 
 

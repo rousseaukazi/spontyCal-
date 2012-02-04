@@ -51,12 +51,16 @@ def getEventData(subscriptions, location):
     eventList = []
     for sub in subscriptions:
         events = database.getEvents(sub)
-        events = [sub]
         eventList += events
+
+    print "XXXX", eventList
 
     return sorted(eventList, dictCompare)
 
 def dictCompare(first, second):
+    print first, second, ':::::::::::::::::::::::'
+
+
     f = parser.parse(first['time'])
     s = parser.parse(second['time'])
 
