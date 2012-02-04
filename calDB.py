@@ -13,15 +13,15 @@ from time import clock, time
 
 def getEvents(subscription):
     con = lite.connect('calSpontyDB.db')
-    cur = con.cursor()  
-    cur.execute("SELECT * FROM Events")
-        
-    rows = cur.fetchall()
-    
     shitReturned = []
-    
-    for row in rows:
-        shitReturned.append(row)
+    with con:
+        con.row_factory = lite.Row
+        cur = con.cursor()  
+        cur.execute("SELECT * FROM Events")
+        rows = cur.fetchall()
+        for row in rows:
+            shitReturned.append(row)
+
     return shitReturned
 
 
