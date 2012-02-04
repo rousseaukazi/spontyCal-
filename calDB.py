@@ -12,18 +12,16 @@ from BeautifulSoup import BeautifulSoup
 from time import clock, time
 
 def getEvents(subscription):
+    con = lite.connect('calSpontyDB.db')
+    cur = con.cursor()  
+    cur.execute("SELECT * FROM Events")
+        
+    rows = cur.fetchall()
     
-    with con:
+    shitReturned = []
     
-        cur = con.cursor()  
-        cur.execute("SELECT * FROM Events")
-        
-        rows = cur.fetchall()
-        
-        shitReturned = []
-        
-        for row in rows:
-            shitReturned.append(row)
+    for row in rows:
+        shitReturned.append(row)
 
 
 

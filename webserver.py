@@ -12,19 +12,19 @@ class Server(resource.Resource):
         return self
 
     def render_GET(self, request):
-        try:
-            path = request.path
-
-            if path == '/favicon.ico':
-                return ''
-            elif path == '/events':
-                return self.render_events(request)
-            else:
-                path = path[1:]
-                with open(path) as f:
-                    return f.read()
-        except Exception as e:
-            return 'Error: %s' % e
+        #try:
+        path = request.path
+        
+        if path == '/favicon.ico':
+            return ''
+        elif path == '/events':
+            return self.render_events(request)
+        else:
+            path = path[1:]
+            with open(path) as f:
+                return f.read()
+        #except Exception as e:
+        #    return 'Error: %s' % e
 
     def render_events(self, request):
         args = request.args
