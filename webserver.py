@@ -1,5 +1,5 @@
 import json
-import calDB as database
+#import calDB as database
 
 from dateutil import parser
 from twisted.web import server, resource
@@ -12,12 +12,22 @@ class Server(resource.Resource):
         return self
 
     def render_GET(self, request):
+        try:
+            path = request.path
+
+            if path == '/favicon.ico':
+                return ''
+            elif path == '/events':
+                return self.render_events(request)
+            else:
+                path = path[1:]
+                with open(path) as f:
+                    return f.read()
+        except Exception as e:
+            return 'Error: %s' % e
+
+    def render_events(self, request):
         args = request.args
-        path = request.path
-
-        if path == '/favicon.ico':
-            return ''
-
         try:
             subscriptions = args['subscriptions'][0].split(',')
             subscriptions = [str(s) for s in subscriptions]
@@ -31,12 +41,8 @@ class Server(resource.Resource):
             location = ''
             print 'Locations header missing from headers: %s' % e
 
-        try:
-            data = getEventData(subscriptions, location)
-        except Exception as e:
-            return 'Error: %s' % e
-        else:
-            return json.dumps(data)
+        data = getEventData(subscriptions, location)
+        return json.dumps(data)
         
     def render_POST(self, request):
         return self.render_GET(request)
